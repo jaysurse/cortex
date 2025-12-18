@@ -16,7 +16,6 @@ class IntentDetector:
     Extracts high-level installation intents from natural language requests.
     """
 
-
     COMMON_PACKAGES: ClassVar[dict[str, list[str]]] = {
         "cuda": ["cuda", "nvidia toolkit"],
         "pytorch": ["pytorch", "torch"],
