@@ -299,15 +299,51 @@ class FirstRunWizard:
         """
         Refactored onboarding: detect available providers, auto-select if one, show menu if multiple, validate lazily, save provider.
         """
-        self._clear_screen()
-        self._print_banner()
+        # Load environment variables from .env files
+        from cortex.env_loader import load_env
+        load_env()
 
         # Load current config to get existing provider
-        current_config = get_config()
-        current_provider = current_config.get("api_provider")
+        current_provider = None
+        if self.CONFIG_FILE.exists():
+            try:
+                with open(self.CONFIG_FILE) as f:
+                    current_config = json.load(f)
+                    current_provider = current_config.get("api_provider")
+            except Exception:
+                pass  # Ignore corrupted config
 
         # Detect available providers
         available_providers = detect_available_providers()
+
+        # Non-interactive mode: auto-configure if possible
+        if not self.interactive:
+            if current_provider:
+                # Already configured, nothing to do
+                self.mark_setup_complete()
+                return True
+            if not available_providers:
+                return False
+            # Auto-select provider
+            if "anthropic" in available_providers:
+                provider = "anthropic"
+            elif "openai" in available_providers:
+                provider = "openai"
+            elif "ollama" in available_providers:
+                provider = "ollama"
+            else:
+                return False
+            
+            # Save configuration
+            self.config["api_provider"] = provider
+            self.config["api_key_configured"] = True
+            self.save_config()
+            self.mark_setup_complete()
+            return True
+
+        # Interactive mode
+        self._clear_screen()
+        self._print_banner()
 
         if not available_providers:
             print("\nNo API keys or local AI found.")
@@ -368,6 +404,7 @@ class FirstRunWizard:
             provider = provider_map.get(choice)
             if provider == "skip":
                 print("Setup skipped. Your current configuration is unchanged.")
+                self.mark_setup_complete()
                 return True
             if not provider or provider not in available_providers:
                 print("Invalid choice or provider not available.")
