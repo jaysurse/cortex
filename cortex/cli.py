@@ -413,7 +413,7 @@ class CortexCLI:
                     break
                 else:
                     self._debug(f"No commands generated with {try_provider}")
-            except RuntimeError as e:
+            except (RuntimeError, Exception) as e:
                 self._debug(f"API call failed with {try_provider}: {e}")
                 continue
 
