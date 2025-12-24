@@ -259,45 +259,57 @@ This wizard will help you set up Cortex in just a few minutes.
         self._clear_screen()
         self._print_header("Step 1: API Configuration")
 
+        # Check for existing API keys
+        existing_claude = os.environ.get("ANTHROPIC_API_KEY")
+        existing_openai = os.environ.get("OPENAI_API_KEY")
+
+        # Build menu with indicators for existing keys
+        claude_status = " ✓ (key found)" if existing_claude else ""
+        openai_status = " ✓ (key found)" if existing_openai else ""
+
         print(
-            """
+            f"""
 Cortex uses AI to understand your commands. You can use:
 
-  1. Claude API (Anthropic) - Recommended
-  2. OpenAI API
+  1. Claude API (Anthropic){claude_status} - Recommended
+  2. OpenAI API{openai_status}
   3. Local LLM (Ollama) - Free, runs on your machine
   4. Skip for now (limited functionality)
 """
         )
 
-        # Check for existing API keys
-        existing_claude = os.environ.get("ANTHROPIC_API_KEY")
-        existing_openai = os.environ.get("OPENAI_API_KEY")
-
-        if existing_claude:
-            print("✓ Found existing Claude API key: ********...")
-            self.config["api_provider"] = "anthropic"
-            self.config["api_key_configured"] = True
-            return StepResult(success=True, data={"api_provider": "anthropic"})
-
-        if existing_openai:
-            print("✓ Found existing OpenAI API key: ********...")
-            self.config["api_provider"] = "openai"
-            self.config["api_key_configured"] = True
-            return StepResult(success=True, data={"api_provider": "openai"})
-
         if not self.interactive:
+            # In non-interactive mode, auto-select if key exists
+            if existing_claude:
+                self.config["api_provider"] = "anthropic"
+                self.config["api_key_configured"] = True
+                return StepResult(success=True, data={"api_provider": "anthropic"})
+            if existing_openai:
+                self.config["api_provider"] = "openai"
+                self.config["api_key_configured"] = True
+                return StepResult(success=True, data={"api_provider": "openai"})
             return StepResult(
                 success=True,
                 message="Non-interactive mode - skipping API setup",
                 data={"api_provider": "none"},
             )
 
+        # Always let user choose
         choice = self._prompt("Choose an option [1-4]: ", default="1")
 
         if choice == "1":
+            if existing_claude:
+                print("\n✓ Using existing Claude API key!")
+                self.config["api_provider"] = "anthropic"
+                self.config["api_key_configured"] = True
+                return StepResult(success=True, data={"api_provider": "anthropic"})
             return self._setup_claude_api()
         elif choice == "2":
+            if existing_openai:
+                print("\n✓ Using existing OpenAI API key!")
+                self.config["api_provider"] = "openai"
+                self.config["api_key_configured"] = True
+                return StepResult(success=True, data={"api_provider": "openai"})
             return self._setup_openai_api()
         elif choice == "3":
             return self._setup_ollama()
