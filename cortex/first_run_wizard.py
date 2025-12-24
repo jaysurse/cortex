@@ -333,7 +333,7 @@ class FirstRunWizard:
                 provider = "ollama"
             else:
                 return False
-            
+
             # Save configuration
             self.config["api_provider"] = provider
             self.config["api_key_configured"] = True
