@@ -10,15 +10,8 @@ from cortex.ask import AskHandler
 from cortex.branding import VERSION, console, cx_header, cx_print, show_banner
 from cortex.coordinator import InstallationCoordinator, StepStatus
 from cortex.demo import run_demo
-
 from cortex.env_manager import EnvironmentManager, get_env_manager
-
-from cortex.env_manager import EnvironmentManager, get_env_manager
-
-
-
 from cortex.first_run_wizard import FirstRunWizard
-
 from cortex.installation_history import InstallationHistory, InstallationStatus, InstallationType
 from cortex.llm.interpreter import CommandInterpreter
 from cortex.network_config import NetworkConfig
