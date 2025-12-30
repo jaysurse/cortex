@@ -377,7 +377,7 @@ class CortexCLI:
                 try_api_key = self._get_api_key_for_provider(try_provider) or "dummy-key"
                 self._debug(f"Trying provider: {try_provider}")
                 interpreter = CommandInterpreter(
-                    api_key=try_api_key, provider=try_provider, offline=self.offline
+                    api_key=try_api_key, provider=try_provider
                 )
 
                 self._print_status("🧠", "Understanding request...")
@@ -1354,7 +1354,6 @@ def show_rich_help():
     table.add_row("rollback <id>", "Undo installation")
     table.add_row("notify", "Manage desktop notifications")
     table.add_row("env", "Manage environment variables")
-    table.add_row("notify", "Manage desktop notifications")
     table.add_row("cache stats", "Show LLM cache statistics")
     table.add_row("stack <name>", "Install the stack")
     table.add_row("doctor", "System health check")
@@ -1653,8 +1652,6 @@ def main():
                 return cli.cache_stats()
             parser.print_help()
             return 1
-        elif args.command == "env":
-            return cli.env(args)
         elif args.command == "env":
             return cli.env(args)
         else:
