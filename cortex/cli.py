@@ -877,22 +877,13 @@ class CortexCLI:
                 self._debug(f"Trying provider: {try_provider}")
                 interpreter = CommandInterpreter(api_key=try_api_key, provider=try_provider)
 
-                self._print_status("🧠", "Understanding request...")
-        try:
-            self._print_status("🧠", t("install.analyzing"))
-
-                self._print_status("📦", "Planning installation...")
+                self._print_status("🧠", t("install.analyzing"))
 
                 for _ in range(10):
-                    self._animate_spinner("Analyzing system requirements...")
+                    self._animate_spinner(t("progress.analyzing_requirements"))
                 self._clear_line()
 
                 commands = interpreter.parse(f"install {software}")
-            self._print_status("📦", t("install.planning"))
-
-            for _ in range(10):
-                self._animate_spinner(t("progress.analyzing_requirements"))
-            self._clear_line()
 
                 if commands:
                     provider = try_provider
@@ -905,13 +896,8 @@ class CortexCLI:
                 continue
 
         if not commands:
-            self._print_error(
-                "No commands generated with any available provider. Please try again with a different request."
-            )
+            self._print_error(t("install.no_commands"))
             return 1
-            if not commands:
-                self._print_error(t("install.no_commands"))
-                return 1
 
         try:
             install_id = None

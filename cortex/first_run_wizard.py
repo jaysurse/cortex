@@ -680,8 +680,6 @@ class FirstRunWizard:
         env_path = get_env_file_path()
         try:
             from dotenv import load_dotenv
-        print("""
-Welcome to Cortex Linux! 🚀
 
             load_dotenv(dotenv_path=env_path, override=False)
         except ImportError:
@@ -735,8 +733,6 @@ Welcome to Cortex Linux! 🚀
             print(f"\n✓ Keeping current provider: {current_name}")
             self.mark_setup_complete()
             return True
-This wizard will help you set up Cortex in just a few minutes.
-""")
 
         if provider == "anthropic":
             if not self._setup_provider_key("Anthropic", "anthropic", "ANTHROPIC_API_KEY"):
@@ -800,9 +796,7 @@ This wizard will help you set up Cortex in just a few minutes.
         claude_status = " ✓ (key found)" if existing_claude else ""
         openai_status = " ✓ (key found)" if existing_openai else ""
 
-        print(
-            f"""
-        print("""
+        print(f"""
 Cortex uses AI to understand your commands. You can use:
 
   1. Claude API (Anthropic){claude_status} - Recommended
@@ -977,9 +971,7 @@ complete -c cortex -f
 complete -c cortex -a 'install' -d 'Install packages'
 complete -c cortex -a 'search' -d 'Search for packages'
 complete -c cortex -a 'info' -d 'Show package information'
-complete -c cortex -a 'doctor' -d 'Diagnose system issues'"""
-        else:
-            return f"# No completion available for shell: {shell}"
+complete -c cortex -a 'doctor' -d 'Diagnose system issues'
 complete -c cortex -n "__fish_use_subcommand" -a "install" -d "Install packages"
 complete -c cortex -n "__fish_use_subcommand" -a "remove" -d "Remove packages"
 complete -c cortex -n "__fish_use_subcommand" -a "update" -d "Update system"
@@ -987,7 +979,8 @@ complete -c cortex -n "__fish_use_subcommand" -a "search" -d "Search packages"
 complete -c cortex -n "__fish_use_subcommand" -a "undo" -d "Undo last operation"
 complete -c cortex -n "__fish_use_subcommand" -a "history" -d "Show history"
 """
-        return "# No completion available for this shell"
+        else:
+            return f"# No completion available for shell: {shell}"
 
     def _get_shell_config(self, shell: str) -> Path:
         """Get the shell config file path."""
